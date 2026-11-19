@@ -41,7 +41,7 @@ char * make_timestring (struct tm *dateinfo)
     // TODO:
     // Declaring the pointer like this can lead to crashes!
     // We'll see how to fix it in class.  NEVER DO THIS!
-    char *timeformat; // see strftime(3)
+    char *timeformat = "(no format)"; // see strftime(3)
 
     /* If not in LED mode, return the string as it should be printed.
      *   '10/31/2023 dt' (date of Hallowe'en) or '12:34:56 am'.
@@ -52,13 +52,13 @@ char * make_timestring (struct tm *dateinfo)
      *    '123456a' (12:34:56 am).
      */
     if ( view_props & DATE_MODE ) {
-        // something with the date
+        timeformat = "%m%d%y";
     } else {
         if ( view_props & AMPM_MODE ) {
             // figure out ampm
         } else {
             if ( view_props & LED_MODE ) {
-                // no colons
+                timeformat = "%H%M%S 24";
             } else {
                 timeformat = "%H:%M:%S 24";
             }
@@ -86,16 +86,18 @@ void show_led(struct tm *dateinfo)
         return;
     }
 
+    char *timestring = make_timestring(dateinfo);
+    // printf("%s", timestring);
     for (i = 0; i < 6; i++) {
         // TODO:
         // Putting the call in the switch is inefficient and
         // makes debugging harder.  We'll fix this in class.
         // *INDENT-OFF*
-        switch ( make_timestring(dateinfo)[i] ) {
+        switch ( timestring[i] ) {
             case ' ': bitvalues = 0x00; break;
-            case '1': bitvalues = 0x01; break;
-            case '2': bitvalues = 0x02; break;
-            case '3': bitvalues = 0x03; break;
+            case '1': bitvalues = 0x30; break;
+            case '2': bitvalues = 0x6d; break;
+            case '3': bitvalues = 0x79; break;
             case '4': bitvalues = 0x04; break;
             case '5': bitvalues = 0x05; break;
             case '6': bitvalues = 0x06; break;

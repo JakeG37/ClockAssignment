@@ -48,11 +48,9 @@ void process_key(keybits KeyCode)
     
     if ( ( KeyCode & 0xff00 ) == 0 ) {  // no ASCII code, so mouse hit
 
-        // TODO: figure out KeyRow and KeyCol
-
-        KeyRow = 0; KeyCol = 0; // any click goes to 24hr mode
-
-	    highlight_button(KeyCol, KeyRow);
+        KeyRow = ( KeyCode & 0xf0 )>> 4;
+        KeyCol = KeyCode & 0x0f;
+        highlight_button(KeyCol, KeyRow);
 	
         if (KeyRow == 0) {
             switch (KeyCol) {
@@ -66,7 +64,11 @@ void process_key(keybits KeyCode)
                     view_props |= ( AMPM_MODE );
                     set_view_properties (view_props);
                     break;
-                case 2:
+                case 2: // date
+                    view_props = get_view_properties();
+                    view_props |= ( DATE_MODE );
+                    set_view_properties (view_props);
+                    date_mode_end = now + 5;
                     break;
                 case 3:
                     break;
@@ -202,7 +204,9 @@ void new_time(struct tm *dateinfo)
 
     // turn off date mode when it expires
     if ( now > date_mode_end ) {
-
+        view_props = get_view_properties();
+        view_props &= ( ~ AMPM_MODE );
+        set_view_properties (view_props);
     }
 
     show(dateinfo);
