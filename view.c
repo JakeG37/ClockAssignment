@@ -38,31 +38,16 @@ void do_test(struct tm *dateinfo)
 // returns a string formatted from the "dateinfo" object.
 char * make_timestring (struct tm *dateinfo)
 {
-    // TODO:
-    // Declaring the pointer like this can lead to crashes!
-    // We'll see how to fix it in class.  NEVER DO THIS!
-    char *timeformat = "(no format)"; // see strftime(3)
+    const char *timeformat;
+    int led_mode = view_props & LED_MODE;
 
-    /* If not in LED mode, return the string as it should be printed.
-     *   '10/31/2023 dt' (date of Hallowe'en) or '12:34:56 am'.
-     *
-     * If in LED mode, don't add slashes or colons; the LEDs can't
-     *    do slashes, and the colons are controlled separately.
-     *    Return something like '103123d' (date of Halloween) or
-     *    '123456a' (12:34:56 am).
-     */
+    // strftime uses space padding for %_m and %l, and lowercase am/pm for %P.
     if ( view_props & DATE_MODE ) {
-        timeformat = "%m%d%y";
+        timeformat = led_mode ? "%m%d%y" : "%_m/%d/%Y dt";
+    } else if ( view_props & AMPM_MODE ) {
+        timeformat = led_mode ? "(no format)" : "%l:%M:%S %P";
     } else {
-        if ( view_props & AMPM_MODE ) {
-            // figure out ampm
-        } else {
-            if ( view_props & LED_MODE ) {
-                timeformat = "%H%M%S 24";
-            } else {
-                timeformat = "%H:%M:%S 24";
-            }
-        }
+        timeformat = led_mode ? "%H%M%S 24" : "%H:%M:%S";
     }
 
     // make the timestring and return it
