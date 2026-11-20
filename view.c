@@ -41,13 +41,12 @@ char * make_timestring (struct tm *dateinfo)
     const char *timeformat;
     int led_mode = view_props & LED_MODE;
 
-    // strftime uses space padding for %_m and %l, and lowercase am/pm for %P.
     if ( view_props & DATE_MODE ) {
         timeformat = led_mode ? "%m%d%y" : "%_m/%d/%Y dt";
     } else if ( view_props & AMPM_MODE ) {
         timeformat = led_mode ? "(no format)" : "%l:%M:%S %P";
     } else {
-        timeformat = led_mode ? "%H%M%S 24" : "%H:%M:%S";
+        timeformat = led_mode ? "%H%M%S 24" : "%H:%M:%S 24";
     }
 
     // make the timestring and return it
